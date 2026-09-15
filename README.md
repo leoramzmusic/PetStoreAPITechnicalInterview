@@ -1,90 +1,90 @@
-# PetStore API – Technical Interview Solution
+# PetStore API – Solución Entrevista Técnica
 
-A **Spring Boot** REST API that integrates with the public [Swagger PetStore API](https://petstore.swagger.io/v2) to demonstrate client-server architecture, service layering, and REST best practices.
+Una **API REST con Spring Boot** que se integra con la [Swagger PetStore API](https://petstore.swagger.io/v2) pública para demostrar arquitectura cliente-servidor, capas de servicio y buenas prácticas REST.
 
-> 📄 Full solution document: [Technical Interview Solution.pdf](https://github.com/leoramzmusic/PetStoreAPITechnicalInterview/blob/main/Technical%20Interview%20Solution.pdf)
-
----
-
-## 📋 Overview
-
-This project was built as part of a technical interview exercise. It exposes two REST endpoints that act as a **proxy/adapter** over the external PetStore API:
-
-| Method | Endpoint            | Description                                   |
-|--------|---------------------|-----------------------------------------------|
-| GET    | `/api/pet/{petId}`  | Retrieve a pet by ID from the external API    |
-| POST   | `/api/pet`          | Create a new pet and return enriched metadata |
+> 📄 Documento completo de la solución: [Technical Interview Solution.pdf](https://github.com/leoramzmusic/PetStoreAPITechnicalInterview/blob/main/Technical%20Interview%20Solution.pdf)
 
 ---
 
-## 🏗️ Architecture
+## 📋 Descripción General
 
-The project follows a clean **3-layer architecture**:
+Este proyecto fue desarrollado como parte de un ejercicio de entrevista técnica. Expone dos endpoints REST que funcionan como **proxy/adaptador** sobre la API externa de PetStore:
+
+| Método | Endpoint            | Descripción                                             |
+|--------|---------------------|---------------------------------------------------------|
+| GET    | `/api/pet/{petId}`  | Obtiene una mascota por ID desde la API externa         |
+| POST   | `/api/pet`          | Crea una nueva mascota y devuelve metadata enriquecida  |
+
+---
+
+## 🏗️ Arquitectura
+
+El proyecto sigue una **arquitectura de 3 capas** limpia:
 
 ```
-Controller  →  Service  →  Client (External API)
+Controlador  →  Servicio  →  Cliente (API Externa)
 ```
 
 ```
 src/main/java/com/example/leo/demo/
-├── DemoApplication.java              # Spring Boot entry point
+├── DemoApplication.java              # Punto de entrada de Spring Boot
 └── exam/
     ├── controller/
-    │   └── PetController.java        # REST endpoints
+    │   └── PetController.java        # Endpoints REST
     ├── service/
-    │   └── PetService.java           # Business logic
+    │   └── PetService.java           # Lógica de negocio
     ├── client/
-    │   └── PetClient.java            # HTTP client to PetStore API
+    │   └── PetClient.java            # Cliente HTTP hacia la API de PetStore
     └── model/
-        ├── Pet.java                  # Pet entity model
-        └── PetResponse.java          # Response wrapper with metadata
+        ├── Pet.java                  # Modelo de entidad Pet
+        └── PetResponse.java          # Wrapper de respuesta con metadata
 ```
 
-### Layer Responsibilities
+### Responsabilidades por Capa
 
-- **`PetController`** — Receives HTTP requests and delegates to the service layer.
-- **`PetService`** — Contains business logic; orchestrates calls to the external API client.
-- **`PetClient`** — Uses `RestTemplate` to communicate with `https://petstore.swagger.io/v2/pet`.
-- **`Pet`** — Plain Java model with `id`, `name`, and `status` fields.
-- **`PetResponse`** — Enriched response that adds `transactionId` (UUID) and `dateCreated` (timestamp) to every POST result.
+- **`PetController`** — Recibe las peticiones HTTP y delega al servicio.
+- **`PetService`** — Contiene la lógica de negocio; orquesta las llamadas al cliente externo.
+- **`PetClient`** — Usa `RestTemplate` para comunicarse con `https://petstore.swagger.io/v2/pet`.
+- **`Pet`** — Modelo Java con campos `id`, `name` y `status`.
+- **`PetResponse`** — Respuesta enriquecida que agrega `transactionId` (UUID) y `dateCreated` (timestamp) a cada resultado del POST.
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Cómo Ejecutar
 
-### Prerequisites
+### Requisitos Previos
 
 - **Java 17+**
-- **Gradle** (wrapper included)
-- Internet access (to reach the external PetStore API)
+- **Gradle** (wrapper incluido)
+- Acceso a internet (para conectarse a la API externa de PetStore)
 
-### Run Locally
+### Ejecución Local
 
 ```bash
-# Clone the repository
+# Clonar el repositorio
 git clone https://github.com/leoramzmusic/PetStoreAPITechnicalInterview.git
 cd PetStoreAPITechnicalInterview
 
-# Build and run
+# Compilar y ejecutar
 ./gradlew bootRun
 ```
 
-The server starts on **`http://localhost:8080`** by default.
+El servidor inicia en **`http://localhost:8080`** por defecto.
 
 ---
 
-## 📡 API Endpoints
+## 📡 Endpoints de la API
 
 ### GET `/api/pet/{petId}`
 
-Fetches a pet from the external Swagger PetStore API by its numeric ID.
+Consulta una mascota desde la API externa de Swagger PetStore por su ID numérico.
 
-**Request:**
+**Petición:**
 ```
 GET http://localhost:8080/api/pet/1
 ```
 
-**Response (200 OK):**
+**Respuesta (200 OK):**
 ```json
 {
   "id": 1,
@@ -93,15 +93,15 @@ GET http://localhost:8080/api/pet/1
 }
 ```
 
-> ⚠️ If the pet is not found in the external API, a fallback object is returned with `name: "Pet not found"` and `status: "unknown"`.
+> ⚠️ Si la mascota no es encontrada en la API externa, se devuelve un objeto de respaldo con `name: "Pet not found"` y `status: "unknown"`.
 
 ---
 
 ### POST `/api/pet`
 
-Creates a new pet by forwarding the request to the external API, then returns enriched metadata.
+Crea una nueva mascota enviando la petición a la API externa y devuelve metadata enriquecida.
 
-**Request:**
+**Petición:**
 ```
 POST http://localhost:8080/api/pet
 Content-Type: application/json
@@ -113,7 +113,7 @@ Content-Type: application/json
 }
 ```
 
-**Response (200 OK):**
+**Respuesta (200 OK):**
 ```json
 {
   "transactionId": "550e8400-e29b-41d4-a716-446655440000",
@@ -123,34 +123,34 @@ Content-Type: application/json
 }
 ```
 
-> ⚠️ If the external API call fails, `status` is returned as `"failed"`.
+> ⚠️ Si la llamada a la API externa falla, el campo `status` se devuelve como `"failed"`.
 
 ---
 
-## 🛠️ Tech Stack
+## 🛠️ Tecnologías Utilizadas
 
-| Technology         | Version  | Purpose                         |
-|--------------------|----------|---------------------------------|
-| Java               | 17       | Core language                   |
-| Spring Boot        | 3.2.7    | Application framework           |
-| Spring Web         | -        | REST controllers & RestTemplate |
-| Gradle             | Wrapper  | Build tool                      |
-| JUnit 5            | -        | Unit testing                    |
-
----
-
-## 🔌 External API
-
-This project integrates with the public **Swagger PetStore API**:
-
-- **Base URL:** `https://petstore.swagger.io/v2/pet`
-- **GET by ID:** `GET /pet/{petId}`
-- **Create pet:** `POST /pet`
-- **Docs:** [https://petstore.swagger.io](https://petstore.swagger.io)
+| Tecnología         | Versión  | Propósito                            |
+|--------------------|----------|--------------------------------------|
+| Java               | 17       | Lenguaje principal                   |
+| Spring Boot        | 3.2.7    | Framework de aplicación              |
+| Spring Web         | -        | Controladores REST y RestTemplate    |
+| Gradle             | Wrapper  | Herramienta de construcción          |
+| JUnit 5            | -        | Pruebas unitarias                    |
 
 ---
 
-## 📂 Project Structure
+## 🔌 API Externa
+
+Este proyecto se integra con la **Swagger PetStore API** pública:
+
+- **URL Base:** `https://petstore.swagger.io/v2/pet`
+- **Obtener por ID:** `GET /pet/{petId}`
+- **Crear mascota:** `POST /pet`
+- **Documentación:** [https://petstore.swagger.io](https://petstore.swagger.io)
+
+---
+
+## 📂 Estructura del Proyecto
 
 ```
 PetStoreAPITechnicalInterview/
@@ -175,6 +175,6 @@ PetStoreAPITechnicalInterview/
 
 ---
 
-## 📄 License
+## 📄 Licencia
 
-This project was created for technical interview purposes. Feel free to use it as a reference.
+Este proyecto fue creado con fines de entrevista técnica. Puedes usarlo libremente como referencia.
